@@ -1,0 +1,25 @@
+#----------------------------------------
+128    =    Character Length
+0    =    Mach
+0    =    Re
+0    =    U0
+1    =    R0
+0.333333    =    T0
+nan    =    dynamic viscosity
+0.1    =    kinetic viscosity
+0.8    =    tau0
+1.5    =    Lambda0
+1e-08    =    RESIDUAL
+-------------Phase Field--------------
+0.02    =    mobility
+0.0390625    =    Cahn number
+0    =    Peclet number
+5    =    inteface width
+0.001    =    surface tension coefficient
+0.0024    =    Beta
+0.0075    =    Kappa
+10    =    liquid density
+1    =    vapor density
+0.1    =    liquid viscosity
+0.1    =    vapor viscosity
+0.56    =    mobility relaxition time
