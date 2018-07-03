@@ -18,6 +18,8 @@ extern void Output_MidyP();
 
 extern void update_Eq(Node2D &node);
 
+extern void update_So(Node2D &node);
+
 extern void MacroVars(Node2D &node);
 
 extern void Collision(Node2D &node);
@@ -27,18 +29,20 @@ extern void Stream(Node2D &node);
 //----------------------------------------------
 //extern void updatePseudoPsi(Node2D &node);
 
-extern void updateSource(Node2D &node);
+extern void updateSourcePF(Node2D &node);
 
-extern void Output_SumRho(int step);
+extern void updateSourcePP(Node2D &node);
 
-extern void Output_Residual(int step,double Residual);
+extern void updateSumRho(int const &step);
+
+extern void Output_L2Norm(int step,double &L2Norm);
 //----------------------------------------------
 
 void updateResidual();
 
 void updateSumRho();
 
-void SLBMSolver()
+void LBMSolver()
 {
 	Output_flowfield(step);
 
@@ -54,7 +58,7 @@ void SLBMSolver()
 		LoopPS(Lx1,Ly1)
 		{
 			update_Eq(NodeArray[i][j]);
-//			update_So(NodeArray[i][j]);
+			update_So(NodeArray[i][j]);
 		}
 		#pragma omp for schedule(guided)
 		LoopPS(Lx1,Ly1)
@@ -71,24 +75,36 @@ void SLBMSolver()
 		{
 			MacroVars(NodeArray[i][j]);
 		}
+		//!------------------Allen-Cahn------------------
+		#if defined _ARK_ALLENCAHN_FLIP
 		#pragma omp for schedule(guided)
 		LoopPS(Lx1,Ly1)
 		{
-			updateSource(NodeArray[i][j]);
+			updateSourcePF(NodeArray[i][j]);
 		}
+		#endif
+		//!-----------------pseudopotential--------------
+		#ifdef _ARK_PSEUDOP_FLIP
+		LoopPS(Lx1,Ly1)
+		{
+			updateSourcePP(NodeArray[i][j]);
+		}
+		#endif
+
 		#pragma omp single
 		{
 			++step;
 			if(step%ConvergeStep == 0)
 			{
 				updateResidual();
-				Output_SumRho(step);
-				Output_Residual(step,ResidualPer1k);
-				if(step%writeFileStep == 0)
-				Output_flowfield(step);
+				updateSumRho(step);
+				#ifdef _ARK_L2NORM_FLIP
+				Output_L2Norm(step,L2Norm);
+				#endif
 			}
 		}
 	}
+	Output_flowfield(step);
 	Output_MidxP();
 	Output_MidyP();
   }

@@ -5,11 +5,11 @@ namespace PhaseFieldAC
 {
 	double const
 
-	M_Phi = 0.02,
+	M_Phi = 0.01,
 
 	Pe = U0*::ChLength/M_Phi,
 
-	Cn = 5/::ChLength,
+	Cn = 4/::ChLength,
 
 	wI = ::ChLength*Cn,
 
@@ -31,7 +31,27 @@ namespace PhaseFieldAC
 
 	TauPhi = M_Phi/RT + 0.5,
 
-	radius = 30;
+	centerX = 0.5*ChLength,centerY = 0.3*ChLength,
+
+	radius = 0.2*ChLength;
+
+	int const 
+
+	iT = (3*ChLength/U0)+1;
 }
 
+namespace PseudoPotential{}
+
+//------------------------output control------------------
+int const 
+
+EndStep = PhaseFieldAC::iT+100,
+
+ConvergeStep = 10,
+
+writeFileStep = 10;
+
+double const 
+
+RESIDUAL = 1E-8;
 #endif

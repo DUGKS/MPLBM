@@ -15,9 +15,13 @@ public:
 //--------------------data------------------------------
 	double * __restrict__ F  = nullptr;
 	double * __restrict__ FNext = nullptr;
+	double * __restrict__ M = nullptr;
 	double * __restrict__ Eq = nullptr;
 	double * __restrict__ So = nullptr;
-//private:
+private:
+	void alloc();
+	void deAlloc();
+	void assign(const DVDF &rhs);
 	int *token = nullptr;
 };
 

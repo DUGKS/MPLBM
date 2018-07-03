@@ -7,11 +7,15 @@ Node2D::Node2D():xn(0),yn(0),msq(new MacroQuantity()),use(new int(1))
 // //
 // 	use = new int(1);
 }
-Node2D::Node2D(Node2D const &rhs)
+void Node2D::assign(Node2D const &rhs)
 {
 	h = rhs.h;
 	f = rhs.f;
 	msq = rhs.msq;
+}
+Node2D::Node2D(Node2D const &rhs)
+{
+	assign(rhs);
 //	
 	use = rhs.use;
 	++*use;
@@ -26,9 +30,7 @@ Node2D& Node2D::operator=(Node2D const &rhs)
 	//	
 			delete use;
 		}
-		h = rhs.h;
-		f = rhs.f;
-		msq = rhs.msq;
+		assign(rhs);
 //	
 		use = rhs.use;
 		++*use;

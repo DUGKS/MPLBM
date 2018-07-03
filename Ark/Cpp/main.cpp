@@ -4,14 +4,23 @@ Node2D **NodeArray = nullptr;
 
 int step = 0;
 
-double SumRho = 0.0;
+double SumRho = 0.0,L2Norm = 0.0;
 //
+extern void selfCheck();
 
 extern void uniform();
 
 extern void AC_Drop();
 
-extern void SLBMSolver();
+extern void AC_ShearFlow_PRE2016Ren();
+
+extern void AC_ZalesakDisk();
+
+extern void AC_DiagTrans();
+
+extern void Sharingan();
+
+extern void LBMSolver();
 
 void AllocateResource();
 
@@ -27,18 +36,18 @@ extern void OutputCase();
 
 int main()
 {
-	OutputCase();
+	selfCheck();
 //	
 	AllocateResource();
 	MeshConstruct();
 	ShadowNodeConstruct();
 //
-//	uniform();
+	#include "ZeroCondition.h"
+	OutputCase();
 
-	AC_Drop();
-
-	SLBMSolver();
+	LBMSolver();
 	DeallocateResource();
+	cout <<"Programme END"<<nl;
 }
 //
 void AllocateResource()
@@ -54,8 +63,8 @@ void MeshConstruct()
 	for(int i = 0;i < Lx2;++i)
 	for(int j = 0;j < Ly2;++j)
 	{
-		NodeArray[i][j].xn = i - 1;
-		NodeArray[i][j].yn = j - 1;
+		NodeArray[i][j].xn = static_cast<double>(i - 0.5);
+		NodeArray[i][j].yn = static_cast<double>(j - 0.5);
 		NodeArray[i][j].in = i;
 		NodeArray[i][j].jn = j;
 	}

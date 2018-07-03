@@ -1,11 +1,12 @@
-vpath %.h Header
-vpath %.cpp Cpp
+vpath %.h Header:Lib
+vpath %.cpp Cpp:Lib
 
-Target = main
+Target = ACSLBM
+QModel = D2Q9AC
 
 CC = icpc
 
-CFLAGS = -std=c++11 -I./Header -O3
+CFLAGS = -std=c++11 -Wall -Wextra -I./Header -I./Lib -I./Constant -O3
 
 MPFLAG = -fopenmp
 
@@ -17,7 +18,7 @@ DIR_OUT = ../FlowField/global ../FlowField/Convergence
 
 SRC = $(wildcard ${DIR_SRC}/*.cpp)
 
-objects = $(patsubst %.cpp,${DIR_OBJ}/%.o,$(notdir ${SRC}))
+objects = $(patsubst %.cpp,${DIR_OBJ}/%.o,$(notdir ${SRC})) ${DIR_OBJ}/${QModel}.o
 
 $(Target):$(objects)
 
@@ -26,6 +27,10 @@ $(Target):$(objects)
 ${DIR_OBJ}/%.o:${DIR_SRC}/%.cpp
 
 	$(CC) $(CFLAGS) -c $< -o $@ ${MPFLAG}
+
+${DIR_OBJ}/${QModel}.o:./Lib/${QModel}.cpp
+
+	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY:clean
 clean:

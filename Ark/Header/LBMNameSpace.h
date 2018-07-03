@@ -1,11 +1,11 @@
 #include "Node2D.h"
-#include "ZeroConstant.h"
+#include "ZeroReference.h"
 
 extern Node2D **NodeArray;
 
 extern int step;
 
-extern double SumRho;
+extern double SumRho,L2Norm;
 
 template <typename T>
 void AllocateArk(T **&ptr,int const Qx,int const Qy)

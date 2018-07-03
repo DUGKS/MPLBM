@@ -9,52 +9,61 @@ void DeallocateARK(double* __restrict__ &f,int const Q)
 	delete[] f;
 	f = nullptr;
 }
-DVDF::DVDF():token(new int(1))
+void DVDF::alloc()
 {
 	AllocateARK(F,Q);
+	AllocateARK(M,Q);
 	AllocateARK(FNext,Q);
 	AllocateARK(Eq,Q);
 	AllocateARK(So,Q);
 }
-DVDF::~DVDF()
+void DVDF::deAlloc()
 {
-	if(--*token == 0)
-	{
-		DeallocateARK(F,Q);
-		DeallocateARK(FNext,Q);
-		DeallocateARK(Eq,Q);
-		DeallocateARK(So,Q);
-	}
+	DeallocateARK(F,Q);
+	DeallocateARK(M,Q);
+	DeallocateARK(FNext,Q);
+	DeallocateARK(Eq,Q);
+	DeallocateARK(So,Q);
 }
-DVDF::DVDF(const DVDF &rhs)
+void DVDF::assign(const DVDF &rhs)
 {
 	F = rhs.F;
+	M = rhs.M;
 	FNext = rhs.FNext;
 	Eq = rhs.Eq;
 	So = rhs.So;
 	token = rhs.token;
 	++*token;
 }
+//!constructor
+DVDF::DVDF():token(new int(1))
+{
+	alloc();
+}
+//!copy constructor
+DVDF::DVDF(const DVDF &rhs)
+{
+	assign(rhs);
+}
+//!destructor
+DVDF::~DVDF()
+{
+	if(--*token == 0)
+	{
+		deAlloc();
+	}
+}
+//!assignment operator
 DVDF& DVDF::operator=(const DVDF &rhs)
 {
 	if(token != rhs.token)
 	{
 		if(--*token == 0)
 		{
-			DeallocateARK(F,Q);
-			DeallocateARK(FNext,Q);
-			DeallocateARK(Eq,Q);
-			DeallocateARK(So,Q);
+			deAlloc();
 			delete token;
 		}
-	//
-		F = rhs.F;
-		FNext = rhs.FNext;
-		Eq = rhs.Eq;
-		So = rhs.So;
-		token = rhs.token;
-	//
-		++*token;
+		assign(rhs);
 	}
 	return *this;
 }

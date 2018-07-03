@@ -12,7 +12,7 @@ public:
 	double U = 0.0,V = 0.0;
 	double Fx = 0.0,Fy = 0.0;
 	double p = 0.0;
-//	double scG = 0.0,PseudoP = 0.0;
+	double scG = 0.0;
 	double Rho_1K = 0.0,U_1K = 0.0,V_1K = 0.0;
 //
 	inline double SqrtPhi(){return Phi_x*Phi_x + Phi_y*Phi_y;}
@@ -23,7 +23,7 @@ class Node2D
 
 public:
 	friend class DVDF;
-	friend class MacroV;
+	friend class MacroQuantity;
 //
 	Node2D();
 	Node2D(const Node2D &rhs);
@@ -44,7 +44,8 @@ public:
 	inline 
 	MacroQuantity& MsQ(){return *msq;}
 
-//private:
+private:
 	int *use = nullptr;
+	void assign(const Node2D& rhs);
 };
 #endif
