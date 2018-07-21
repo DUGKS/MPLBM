@@ -18,6 +18,8 @@ extern void AC_ZalesakDisk();
 
 extern void AC_DiagTrans();
 
+extern void AC_Smoothed();
+
 extern void Sharingan();
 
 extern void LBMSolver();

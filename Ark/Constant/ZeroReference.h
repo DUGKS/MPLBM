@@ -11,9 +11,9 @@ int const
 
 nD = 2,//number of dimension
 
-Lx = 256,
+Lx = 128,
 
-Ly = 256,
+Ly = 128,
 
 Lx1 = Lx + 1,
 
@@ -25,7 +25,7 @@ Ly2 = Ly + 2;
 
 double const 
 
-ChLength = 256.0;
+ChLength = 128.0;
 
 double const
 
@@ -47,9 +47,9 @@ Lambda0 = 1.0/(2*RT),
 
 Rho0 = 1,//CS 4.5435E-2,
 
-U0 = 0.01,
+U0 = 0.0,
 
-V0 = 0,
+V0 = 0.0,
 
 p0 = 1.0,
 
@@ -61,9 +61,9 @@ Re = 0,
 
 // Nu0 = Mu0/Rho0,
 
-Mu0 = 0.1*Rho0,
+Mu0 = 0.01*Rho0,
 
-Nu0 = 0.1,
+Nu0 = Mu0/Rho0,
 
 Tau0 = 0.5 + Nu0/RT;
 

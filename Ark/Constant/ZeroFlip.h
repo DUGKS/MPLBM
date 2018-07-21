@@ -29,17 +29,17 @@
 #define _ARK_ALLENCAHN_FLIP
 #endif
 
-// #ifndef _ARK_MOMENTUM_FLIP
-// #define _ARK_MOMENTUM_FLIP
+#ifndef _ARK_MOMENTUM_FLIP
+#define _ARK_MOMENTUM_FLIP
+#endif
+
+// #ifndef _ARK_ENDTIME_FLIP
+// #define _ARK_ENDTIME_FLIP
 // #endif
 
-#ifndef _ARK_ENDTIME_FLIP
-#define _ARK_ENDTIME_FLIP
-#endif
-
-#ifndef _ARK_L2NORM_FLIP
-#define _ARK_L2NORM_FLIP
-#endif
+// #ifndef _ARK_L2NORM_FLIP
+// #define _ARK_L2NORM_FLIP
+// #endif
 
 #include "ZeroMacro.h"
 

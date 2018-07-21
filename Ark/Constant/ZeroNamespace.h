@@ -5,11 +5,11 @@ namespace PhaseFieldAC
 {
 	double const
 
-	M_Phi = 0.01,
+	M_Phi = 0.1,
 
 	Pe = U0*::ChLength/M_Phi,
 
-	Cn = 4/::ChLength,
+	Cn = 5/::ChLength,
 
 	wI = ::ChLength*Cn,
 
@@ -31,27 +31,37 @@ namespace PhaseFieldAC
 
 	TauPhi = M_Phi/RT + 0.5,
 
-	centerX = 0.5*ChLength,centerY = 0.3*ChLength,
+	centerX = 0.5*ChLength,centerY = 0.5*ChLength,
 
-	radius = 0.2*ChLength;
+	radius = 0.25*ChLength;
 
-	int const 
+	// radius = 30;
 
-	iT = (3*ChLength/U0)+1;
+	#ifdef _ARK_ENDTIME_FLIP
+
+	int const iT = (ChLength/U0)+1;
+
+	#endif
 }
 
 namespace PseudoPotential{}
 
 //------------------------output control------------------
+#ifdef _ARK_ENDTIME_FLIP
+
 int const 
 
-EndStep = PhaseFieldAC::iT+100,
+EndStep = PhaseFieldAC::iT+100;
 
-ConvergeStep = 10,
+#endif
 
-writeFileStep = 10;
+int const
+
+ConvergeStep = 10000,
+
+writeFileStep = 10000;
 
 double const 
 
-RESIDUAL = 1E-8;
+RESIDUAL = 1E-13;
 #endif

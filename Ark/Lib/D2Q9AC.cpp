@@ -45,6 +45,8 @@ void update_Eq(Node2D &node)
 }
 void update_So(Node2D &node)
 {
+	double uu,u1;
+	uu = node.MsQ().SqrtUV();
 	for(int k = 0;k < Q;++k)
 	{
 		#ifdef _ARK_ALLENCAHN_FLIP
@@ -52,11 +54,28 @@ void update_So(Node2D &node)
 		#endif
 
 		#ifdef _ARK_MOMENTUM_FLIP
-		double u1 = (xi_u[k]*node.MsQ().U + xi_v[k]*node.MsQ().V)/RT;
+		u1 = (xi_u[k]*node.MsQ().U + xi_v[k]*node.MsQ().V)/RT;
+
+		// node.f.So[k] = K_fSo*omega[k]*
+		// (
+		// 	(xi_u[k]*(node.msq->Fx) + xi_v[k]*(node.msq->Fy))/RT
+		// +	u1*(xi_u[k]*(node.msq->Rho_x) + xi_v[k]*(node.msq->Rho_y))
+		// );
+
+		double Gamma = u1 + 0.5*u1*u1 - uu*Lambda0;
 		node.f.So[k] = K_fSo*omega[k]*
 		(
-			(xi_u[k]*(node.msq->Fx) + xi_v[k]*(node.msq->Fy))/RT
-		+	u1*(xi_u[k]*(node.msq->Rho_x) + xi_v[k]*(node.msq->Rho_y))
+			(1+Gamma)*(
+				(xi_u[k]-node.MsQ().U)*(node.msq->Fx)
+			 	+ 
+				(xi_v[k]-node.MsQ().V)*(node.msq->Fy)
+					  )/RT
+			+
+			Gamma*(
+				(xi_u[k]-node.MsQ().U)*(node.msq->Rho_x)
+			 	+ 
+				(xi_v[k]-node.MsQ().V)*(node.msq->Rho_y)
+				)
 		);
 		#endif
 	}
@@ -81,14 +100,15 @@ void MacroVars(Node2D &node)
 	// node.MsQ().V   = 
 	// -U0*cos(PI*xn/ChLength)*sin(PI*yn/ChLength)
 	// *cos(PI*(step+1.0)/PhaseFieldAC::iT);
-
-	if(PhaseFieldAC::iT/2 == step)
-	{
-		node.MsQ().U   = 
-		-U0*PI*sin(PI*xn/ChLength)*cos(PI*yn/ChLength);
-		node.MsQ().V   = 
-		U0*PI*cos(PI*xn/ChLength)*sin(PI*yn/ChLength);
-	}
+	//-------------------------------shear flow PRE2016-----------------
+	// if(PhaseFieldAC::iT/2 == step)
+	// {
+	// 	node.MsQ().U   = 
+	// 	-U0*PI*sin(PI*xn/ChLength)*cos(PI*yn/ChLength);
+	// 	node.MsQ().V   = 
+	// 	U0*PI*cos(PI*xn/ChLength)*sin(PI*yn/ChLength);
+	// }
+	//-------------------------------shear flow PRE2014------------------
 	// if(PhaseFieldAC::iT/2 == step)
 	// {
 	// 	node.MsQ().U   = 
@@ -104,7 +124,7 @@ void MacroVars(Node2D &node)
 //
 	node.MsQ().p = VectorDot(node.f.F)-node.f.F[0]
 			 + 0.5*(node.msq->Rho_x*node.msq->U + node.msq->Rho_y*node.msq->V)
-			 -node.msq->Rho*(uu*Lambda0);
+			 -node.msq->Rho*(uu*Lambda0)*omega[0];
 	node.MsQ().p *= Kp;
 	#endif
 }

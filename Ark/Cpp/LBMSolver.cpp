@@ -10,9 +10,11 @@ extern void Output_flowfield(int step);
 
 extern void updateResidual();
 
-extern void Output_MidxP();
+extern void Output_Midx(int);
 
-extern void Output_MidyP();
+extern void Output_Midy(int);
+
+extern void Output_Diag(int);
 
 //--------------------------------------------
 
@@ -51,8 +53,8 @@ void LBMSolver()
   omp_set_num_threads(ThreadNum);
   #pragma omp parallel
   {
-	while(step < EndStep)
-	//while(ResidualPer1k > RESIDUAL)
+	//while(step < EndStep)
+	while(ResidualPer1k > RESIDUAL)
 	{
 		#pragma omp for schedule(guided) 
 		LoopPS(Lx1,Ly1)
@@ -105,7 +107,8 @@ void LBMSolver()
 		}
 	}
 	Output_flowfield(step);
-	Output_MidxP();
-	Output_MidyP();
+	// Output_Midx(step);
+	// Output_Midy(step);
+	Output_Diag(step);
   }
 }

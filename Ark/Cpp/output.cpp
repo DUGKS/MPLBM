@@ -62,6 +62,7 @@ void OutputCase()
 				 <<PhaseFieldAC::NuL<<"    =    kinetic liquid viscosity"<<nl
 				 <<PhaseFieldAC::NuV<<"    =    kinetic vapor viscosity"<<nl
 				 <<PhaseFieldAC::TauPhi<<"    =    mobility relaxition time"<<nl
+				 <<PhaseFieldAC::radius/ChLength<<"    =    radius"<<nl
 				 #endif
 				 <<"------------------End-------------------"<<nl;
 	OutFile_Case.close();
@@ -130,9 +131,10 @@ void Output_flowfield(int step)
 	ostringstream title,varName,dataIJK,VarLocation;
 	title << "title = \"Step"<<step<<"_"<<"tau"<<Tau0<<"\""<<"\n";
 	// varName << "variables = x,y,<Greek>f</Greek>,<Greek>r</Greek>,u,v,p,\
-	// 		<Greek>f</Greek><sub>x</sub>,<Greek>f</Greek><sub>y</sub>,\
-	// 		Fx,Fy\n";
-	varName << "variables = x,y,<Greek>f</Greek>\n";
+	// 		<Greek>f</Greek><sub>x</sub>,<Greek>f</Greek><sub>y</sub>\n";
+	//varName << "variables = x,y,<Greek>f</Greek>\n";
+
+	varName << "variables = x,y,<Greek>f</Greek>,<Greek>r</Greek>,u,v,p\n";
 	dataIJK << "zone I = "<<Lx<<", J = "<<Ly<<", F = BLOCK\n";
 	string tec360Header[3]={title.str().c_str(),varName.str().c_str(),
 							dataIJK.str().c_str()};
@@ -164,37 +166,37 @@ void Output_flowfield(int step)
 	}
 	OutFile_flowfield<<"\n";
 //
-	// LoopPS(Lx1,Ly1)
-	// {
-	// 	OutFile_flowfield<<NodeArray[i][j].msq->Rho<<"    ";
-	// 	if(j%10 == 0)
-	// 		OutFile_flowfield<<"\n";
-	// }
-	// OutFile_flowfield<<"\n";
+	LoopPS(Lx1,Ly1)
+	{
+		OutFile_flowfield<<NodeArray[i][j].msq->Rho<<"    ";
+		if(j%10 == 0)
+			OutFile_flowfield<<"\n";
+	}
+	OutFile_flowfield<<"\n";
 	
-	// LoopPS(Lx1,Ly1)
-	// {
-	// 	OutFile_flowfield<<NodeArray[i][j].msq->U<<"    ";
-	// 	if(j%10 == 0)
-	// 		OutFile_flowfield<<"\n";
-	// }
-	// OutFile_flowfield<<"\n";
+	LoopPS(Lx1,Ly1)
+	{
+		OutFile_flowfield<<NodeArray[i][j].msq->U<<"    ";
+		if(j%10 == 0)
+			OutFile_flowfield<<"\n";
+	}
+	OutFile_flowfield<<"\n";
 	
-	// LoopPS(Lx1,Ly1)
-	// {
-	// 	OutFile_flowfield<<NodeArray[i][j].msq->V<<"    ";
-	// 	if(j%10 == 0)
-	// 		OutFile_flowfield<<"\n";
-	// }
-	// OutFile_flowfield<<"\n";
+	LoopPS(Lx1,Ly1)
+	{
+		OutFile_flowfield<<NodeArray[i][j].msq->V<<"    ";
+		if(j%10 == 0)
+			OutFile_flowfield<<"\n";
+	}
+	OutFile_flowfield<<"\n";
 	
-	// LoopPS(Lx1,Ly1)
-	// {
-	// 	OutFile_flowfield<<NodeArray[i][j].msq->p<<"    ";
-	// 	if(j%10 == 0)
-	// 		OutFile_flowfield<<"\n";
-	// }
-	// OutFile_flowfield<<"\n";
+	LoopPS(Lx1,Ly1)
+	{
+		OutFile_flowfield<<NodeArray[i][j].msq->p<<"    ";
+		if(j%10 == 0)
+			OutFile_flowfield<<"\n";
+	}
+	OutFile_flowfield<<"\n";
 
 	// LoopPS(Lx1,Ly1)
 	// {
@@ -223,24 +225,51 @@ void Output_flowfield(int step)
 	// 		OutFile_flowfield<<"\n";
 	// }
 }
-void Output_MidxP()
+void Output_Diag(int step)
 {
+	using PhaseFieldAC::M_Phi;
+	ostringstream oss_Diag;
+	oss_Diag << "../FlowField/Convergence/" << "Diag_Mesh"<<Lx
+			  <<"M"<<M_Phi<<"step"<<step<<"_"<<_CASE_NAME_ARK<<".dat";
+	ofstream OF_Diag(oss_Diag.str().c_str());
+	OF_Diag << setiosflags(ios::scientific) << setprecision(12);
+	for(int i = 1;i < Lx1;++i)
+	{
+		int j = Lx1-i;
+		OF_Diag << NodeArray[i][j].xn <<"    "
+				 << NodeArray[i][j].msq->Rho <<"    "
+				 << NodeArray[i][j].msq->p <<"    "
+				 << NodeArray[i][j].msq->U <<"    "
+				 << NodeArray[i][j].msq->V <<"    "
+				 << NodeArray[i][j].msq->Fx <<"    "
+				 << NodeArray[i][j].msq->Fy <<"    "
+				 <<'\n';
+	}
+}
+void Output_Midx(int step)
+{
+	using PhaseFieldAC::M_Phi;
 	ostringstream oss_MidxP;
-	oss_MidxP << "../FlowField/Convergence/" << "Midxp_Mesh"<<Lx<<"tau"<<Tau0<<"radius"<<radius<<"_RLBM.dat";
+	oss_MidxP << "../FlowField/Convergence/" << "Midx_Mesh"<<Lx
+			  <<"M"<<M_Phi<<"step"<<step<<"_"<<_CASE_NAME_ARK<<".dat";
 	ofstream OF_MidxP(oss_MidxP.str().c_str());
 	OF_MidxP << setiosflags(ios::scientific) << setprecision(12);
 	for(int i = 1;i < Lx1;++i)
 	{
 		OF_MidxP << NodeArray[i][64].xn <<"    "
-				 << NodeArray[i][64].msq->p <<"    "
 				 << NodeArray[i][64].msq->Rho <<"    "
+				 << NodeArray[i][64].msq->p <<"    "
+				 << NodeArray[i][64].msq->U <<"    "
+				 << NodeArray[i][64].msq->V <<"    "
 				 <<'\n';
 	}
 }
-void Output_MidyP()
+void Output_Midy(int step)
 {
+	using PhaseFieldAC::M_Phi;
 	ostringstream oss_MidYP;
-	oss_MidYP << "../FlowField/Convergence/" << "MidYp_Mesh"<<Lx<<"tau"<<Tau0<<"radius"<<radius<<"_RLBM.dat";
+	oss_MidYP << "../FlowField/Convergence/" << "MidY_Mesh"<<Lx
+			  <<"M"<<M_Phi<<"step"<<step<<"_"<<_CASE_NAME_ARK<<".dat";
 	ofstream OF_MidYP(oss_MidYP.str().c_str());
 	OF_MidYP << setiosflags(ios::scientific) << setprecision(12);
 	for(int j = 1;j < Ly1;++j)
@@ -254,7 +283,7 @@ void Output_MidyP()
 void updateResidual()
 {
 	#ifndef _ARK_ENDTIME_FLIP
-	SumRho = 0.0;
+	double SumRho = 0.0;
 	double SumdRho = 0.0,dRho = 0.0;
 	LoopPS(Lx1,Ly1)
 	{
@@ -275,27 +304,35 @@ void updateResidual()
 	// 	du = NodeArray[i][j].msq->U - NodeArray[i][j].msq->U_1K;
 	// 	dv = NodeArray[i][j].msq->V - NodeArray[i][j].msq->V_1K;
 	// 	Sumdudv = du*du + dv*dv;
-	// 	SumUV += (NodeArray[i][j].msq->U*NodeArray[i][j].msq->U + NodeArray[i][j].msq->V*NodeArray[i][j].msq->V);
+	// 	SumUV += 
+	// (
+	// 	NodeArray[i][j].msq->U*NodeArray[i][j].msq->U
+	// +   NodeArray[i][j].msq->V*NodeArray[i][j].msq->V
+	// );
 	// 	NodeArray[i][j].msq->U_1K = NodeArray[i][j].msq->U;
 	// 	NodeArray[i][j].msq->V_1K = NodeArray[i][j].msq->V;
 	// }
 	// ResidualPer1k = sqrt(Sumdudv/(SumUV+1E-30));
 	cout << setiosflags(ios::scientific) << setprecision(12);
-	cout <<step <<"    "<<SumRho<<"    "<<ResidualPer1k<<'\n';
+	cout <<step <<"    "<<::SumRho<<"    "<<ResidualPer1k<<'\n';
 	Output_Residual(step,ResidualPer1k);
 	if(step%writeFileStep == 0)
+	{
 		Output_flowfield(step);
+		Output_Diag(step);
+	}
 
 	#else
 
 	using PhaseFieldAC::iT;
-	if
-	(
-		iT/4 == step ||
-		iT/2 == step ||
-	  3*iT/4 == step ||
-	    iT   == step
-	)
+	// if
+	// (
+	// 	iT/4 == step ||
+	// 	iT/2 == step ||
+	//   3*iT/4 == step ||
+	//     iT   == step
+	// )
+	if(step%50 == 0)
 	{
 		Output_flowfield(step);
 	}
@@ -303,7 +340,7 @@ void updateResidual()
 }
 void updateSumRho(int const &step)
 {
-	SumRho = 0.0;
+	::SumRho = 0.0;
 	LoopPS(Lx1,Ly1)
 	{
 		SumRho += NodeArray[i][j].MsQ().Rho;

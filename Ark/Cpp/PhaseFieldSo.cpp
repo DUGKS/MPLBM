@@ -48,12 +48,17 @@ void updateSourcePF(Node2D &node)
 	node.MsQ().prevPhiV = node.MsQ().Phi*node.MsQ().V;
 //
 	double L = sqrt(node.MsQ().SqrtPhi());
-	setZero(L);
+//	setZero(L);
 //
 //
 	if(L != 0)
 	{
 		node.MsQ().Phi_x = SourcePhi(node.MsQ().Phi)*node.MsQ().Phi_x/L + PhiU_t;
 		node.MsQ().Phi_y = SourcePhi(node.MsQ().Phi)*node.MsQ().Phi_y/L + PhiV_t;
+	}
+	else
+	{
+		node.MsQ().Phi_x = PhiU_t;
+		node.MsQ().Phi_y = PhiV_t;
 	}
 }

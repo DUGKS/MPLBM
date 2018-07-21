@@ -43,8 +43,6 @@ double AnalyticalAC_Drop(double x,double y)
 	using PF::centerX;
 	using PF::centerY;
 	using PF::radius;
-	int const slotL = centerX - 10;
-	int const slotR = centerX + 10;
 
 	double phi = 0.0;
 
@@ -54,6 +52,8 @@ double AnalyticalAC_Drop(double x,double y)
 	*tanh(2*(sqrt((x-centerX)*(x-centerX)+(y-centerY)*(y-centerY))-radius)/wI)
 	);
 
+	// int const slotL = centerX - 10;
+	// int const slotR = centerX + 10;
 	// if(sqrt((x-centerX)*(x-centerX) + (y-centerY)*(y-centerY)) > radius)
 	// {
 	// 	phi = PhiV;
@@ -66,6 +66,7 @@ double AnalyticalAC_Drop(double x,double y)
 	// {
 	// 	phi = PhiL;
 	// }
+	
 	return phi;
 }
 double Sharingan(double const &xn,double const &yn)
@@ -308,9 +309,11 @@ void selfCheck()
 	#error "LBM model collision"
 	#endif
 
+	#ifdef _ARK_ENDSTEP_FLIP
 	if(PhaseFieldAC::iT%10 != 0 )
 	{
 		cout <<"error : EndStep%10 != 0, EndStep = "<<EndStep<<nl;
 		exit(-1);
 	}
+	#endif
 }
